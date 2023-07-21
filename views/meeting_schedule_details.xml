@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.actions.act_window" id="details_meeting_schedule_action">
+        <field name="name">Schedules</field>
+        <field name="res_model">meeting.schedule</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Schedules" id="menu_meeting_schedule"
+              action="details_meeting_schedule_action"
+              parent="menu_meeting_logic"
+              sequence="6"/>
+    <record id="meeting_schedule_tree_view" model="ir.ui.view">
+        <field name="name">Meeting Schedules</field>
+        <field name="model">meeting.schedule</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="subject"/>
+                <field name="date_time"/>
+                <field name="host"/>
+            </tree>
+
+        </field>
+    </record>
+</odoo>
