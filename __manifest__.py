@@ -7,6 +7,7 @@
         'security/ir.model.access.csv',
         'views/meeting_login_details_view.xml',
         'views/meeting_schedule_details.xml',
+        'views/meeting_weekday_view.xml',
     ],
     'demo': [],
     'summary': "Logic Meetings",

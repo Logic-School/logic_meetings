@@ -16,10 +16,60 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="subject"/>
-                <field name="date_time"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+                <field name="assigned_id"/>
                 <field name="host"/>
             </tree>
 
+        </field>
+    </record>
+
+    <record id="meeting_schedule_form_view" model="ir.ui.view">
+        <field name="name">meeting.schedule.form</field>
+        <field name="model">meeting.schedule</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="get_available_login_id" string="Request Login Credentials" help="Click here to request for Login ID" type="object" class="oe_highlight" attrs="{'invisible': [('assigned_id','!=',False)]}"/>
+                    <button name="release_login_id" string="Release Credentials" help="Click here to release currently assigned ID" type="object" class="oe_highlight" attrs="{'invisible': [('assigned_id','=',False)]}"/>
+                    <button name="schedule_meetings" string="Schedule" help="Click here to schedule the meeting" type="object" class="oe_highlight" attrs="{'invisible': [('scheduled','=',True)]}"/>
+                    <button name="unschedule_meetings" string="Unschedule" help="Click here to schedule the meeting" type="object" class="oe_highlight" attrs="{'invisible': [('scheduled','=',False)]}"/>
+
+                </header> 
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="subject"/>
+                            <field name="scheduled" invisible="1"/>
+                            <field name="schedule_type"/>
+                            <field name="standard_meet_date" attrs="{'invisible': [('schedule_type','!=','standard')]}"/>
+                            <field name="weekdays" widget="many2many_tags" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/> 
+                            <field name="start_time" widget="float_time"/>
+                            <field name="end_time" widget="float_time"/>
+                            <field name="host"/>
+                        </group>
+                        <group>
+                            <field name="assigned_id"/>
+                            <field name="req_capacity"/>
+                            <field name="meeting_platform"/>
+                        </group>
+                    </group>
+                    <group>
+                        <notebook>
+                            <page string="Scheduled Dates and Time">
+                                <field name="dates">
+                                    <tree>
+                                        <field name="start_datetime"/>
+                                        <field name="end_datetime"/>
+                                        <field name="schedule_id"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
         </field>
     </record>
 </odoo>

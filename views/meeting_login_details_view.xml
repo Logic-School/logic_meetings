@@ -2,7 +2,7 @@
 <odoo>
 
     <record model="ir.actions.act_window" id="details_meeting_login_details_action">
-        <field name="name">meeting.login.action</field>
+        <field name="name">Login IDs</field>
         <field name="res_model">meeting.login</field>
         <field name="view_mode">tree,form</field>
     </record>
@@ -43,6 +43,19 @@
                             <field name="current_user"/>
                             <field name="second_user" attrs="{'invisible': [('meeting_platform','!=','dual')]}"/>
                         </group>
+                    </group>
+                    <group>
+                        <notebook>
+                            <page string="Schedules">
+                                <field name="schedules">
+                                    <tree>
+                                        <field name="start_time"/>
+                                        <field name="end_time"/>
+                                        <field name="host"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </group>
                 </sheet>
             </form>

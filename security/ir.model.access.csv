@@ -1,7 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 
-access_handle,access_handle_details,model_meeting_login,base.group_user,1,1,1,1
+access_login,access_login_details,model_meeting_login,base.group_user,1,1,1,1
 access_schedule,access_schedule_details,model_meeting_schedule,base.group_user,1,1,1,1
+access_weekday,access_weekday_details,model_meeting_weekday,base.group_user,1,1,1,1
+access_date,access_meet_date_details,model_meeting_date,base.group_user,1,1,1,1
 
 
 
