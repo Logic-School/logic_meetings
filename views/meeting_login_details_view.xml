@@ -48,9 +48,9 @@
                         <notebook>
                             <page string="Schedules">
                                 <field name="schedules">
-                                    <tree>
-                                        <field name="start_time"/>
-                                        <field name="end_time"/>
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="assigned_id"/>
                                         <field name="host"/>
                                     </tree>
                                 </field>

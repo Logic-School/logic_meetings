@@ -16,8 +16,8 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="subject"/>
-                <field name="start_time"/>
-                <field name="end_time"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
                 <field name="assigned_id"/>
                 <field name="host"/>
             </tree>
@@ -31,10 +31,11 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="get_available_login_id" string="Request Login Credentials" help="Click here to request for Login ID" type="object" class="oe_highlight" attrs="{'invisible': [('assigned_id','!=',False)]}"/>
+                    <button name="get_available_login_id" string="Request Login Credentials" help="Click here to request for Login ID" type="object" class="oe_highlight" attrs="{'invisible': ['|',('assigned_id','!=',False),('scheduled','=',False)]}"/>
                     <button name="release_login_id" string="Release Credentials" help="Click here to release currently assigned ID" type="object" class="oe_highlight" attrs="{'invisible': [('assigned_id','=',False)]}"/>
-                    <button name="schedule_meetings" string="Schedule" help="Click here to schedule the meeting" type="object" class="oe_highlight" attrs="{'invisible': [('scheduled','=',True)]}"/>
-                    <button name="unschedule_meetings" string="Unschedule" help="Click here to schedule the meeting" type="object" class="oe_highlight" attrs="{'invisible': [('scheduled','=',False)]}"/>
+                    <button name="schedule_meetings" string="Schedule" help="Click here to schedule the meeting" type="object" class="btn-success" attrs="{'invisible': [('scheduled','=',True)]}"/>
+                    <button name="unschedule_meetings" string="Unschedule" help="Click here to schedule the meeting" type="object" class="btn-warning" attrs="{'invisible': [('scheduled','=',False)]}"/>
+                    <button name="clear_dates" string="Clear Dates" help="Click here to delete all date records related to this schedule" type="object" class="btn-danger" confirm="Are you sure you want to delete all date records related to this schedule?" attrs="{'invisible': [('dates','=',[] )]}"/>
 
                 </header> 
                 <sheet>
@@ -43,11 +44,15 @@
                             <field name="subject"/>
                             <field name="scheduled" invisible="1"/>
                             <field name="schedule_type"/>
-                            <field name="standard_meet_date" attrs="{'invisible': [('schedule_type','!=','standard')]}"/>
+                            <field name="standard_meet_start_datetime" attrs="{'invisible': [('schedule_type','!=','standard')]}"/>
+                            <field name="standard_meet_end_datetime" attrs="{'invisible': [('schedule_type','!=','standard')]}"/>
+                            <field name="start_date_recurring" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/>
+                            <field name="end_date_recurring" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/>
                             <field name="weekdays" widget="many2many_tags" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/> 
-                            <field name="start_time" widget="float_time"/>
-                            <field name="end_time" widget="float_time"/>
+                            <field name="start_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/>
+                            <field name="end_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/>
                             <field name="host"/>
+                            <field name="testf"/>
                         </group>
                         <group>
                             <field name="assigned_id"/>
@@ -62,7 +67,10 @@
                                     <tree>
                                         <field name="start_datetime"/>
                                         <field name="end_datetime"/>
+                                        <field name="subject"/>
+                                        <field name="scheduled"/>
                                         <field name="schedule_id"/>
+                                        <field name="assigned_id"/>
                                     </tree>
                                 </field>
                             </page>
