@@ -17,7 +17,7 @@ class MeetingWeekday(models.Model):
         default="monday",
                                     
         )
-    # @api.depends('weekday')
-    # def _compute_name(self):
-    #     for record in self:
-    #         record.name = dict(self._fields['weekday'].selection)[record.weekday]
+    @api.depends('weekday')
+    def _compute_name(self):
+        for record in self:
+            record.name = dict(self._fields['weekday'].selection)[record.weekday]

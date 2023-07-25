@@ -8,3 +8,5 @@ class MeetingDate(models.Model):
     subject = fields.Char(related="schedule_id.subject")
     scheduled = fields.Boolean(related="schedule_id.scheduled",string="Is Scheduled")
     assigned_id = fields.Many2one('meeting.login',related="schedule_id.assigned_id", string="Assigned ID")
+    host = fields.Many2one('res.users',related="schedule_id.host",string="Host")
+    meeting_platform = fields.Selection(related="schedule_id.meeting_platform",string="Meeting Platform")

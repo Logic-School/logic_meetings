@@ -21,6 +21,7 @@
             <tree>
                 <field name="login_id"/>
                 <field name="current_user"/>
+                <field name="second_user"/>
             </tree>
 
         </field>

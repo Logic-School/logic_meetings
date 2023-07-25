@@ -36,7 +36,6 @@ from datetime import date,timedelta,time,datetime
 
 def get_login_id(self,record):
     if not record.assigned_id:
-        successfully_assigned=False
         compatible_login_ids = self.env['meeting.login'].search([ '&', ('meeting_platform', 'in', (record.meeting_platform,'dual') ), ('capacity', '>=', record.req_capacity)])
         if record.schedule_type=='standard':
             for login_id in compatible_login_ids:
@@ -44,6 +43,8 @@ def get_login_id(self,record):
                     record.assigned_id = login_id.id
                     return True
             return False
+        
+        # here it works by counting the total no of dates the slots were available and the required no of dates and matching it
         elif record.schedule_type=='recurring':
             for login_id in compatible_login_ids:
                 available_count = 0
@@ -52,6 +53,7 @@ def get_login_id(self,record):
                         available_count+=1
                     else:
                         break
+                record.testf = available_count
                 if available_count==len(record.dates):
                     record.assigned_id = login_id
                     return True
@@ -59,13 +61,6 @@ def get_login_id(self,record):
 
 # function to check if the required date and time slot is available in a schedule obj 
 def check_slot_available(date,rec_start_datetime,rec_end_datetime):
-    # if date.start_datetime.date() == record.standard_meet_start_datetime.date():
-    # case1 = (date.start_datetime<rec_start_datetime) and (date.end_datetime>rec_start_datetime and date.end_datetime<rec_end_datetime)
-    # # case1 = (date.start_datetime<rec_start_datetime) and (date.end_datetime>rec_start_datetime and date.end_datetime>rec_end_datetime)
-
-    # case2 = (date.start_datetime>rec_start_datetime) and (date.start_datetime<rec_end_datetime and date.end_datetime>rec_end_datetime)
-    # case3 = (date.start_datetime<rec_start_datetime) and (date.end_datetime>rec_end_datetime)
-    # case4 = (date.start_datetime>rec_start_datetime) and (date.end_datetime<rec_end_datetime)
     case1 = (date.start_datetime<rec_start_datetime) and (date.end_datetime<rec_end_datetime) and (date.end_datetime>rec_end_datetime)
     case2 = (date.start_datetime>rec_start_datetime) and (date.end_datetime<rec_end_datetime)
     case3 = (date.start_datetime>rec_start_datetime) and (date.start_datetime<rec_end_datetime) and (date.end_datetime>rec_end_datetime)
@@ -74,32 +69,67 @@ def check_slot_available(date,rec_start_datetime,rec_end_datetime):
     if case1 or case2 or case3 or case4:
         return False
     return True
-    
+
+def is_dual_type_record(login_id):
+    return login_id.meeting_platform=="dual"    
+
+# if it returns False, then the slot is occupied. true mean its free
+def check_if_slot_occupied_from_login_id(record,login_id,meeting_platform):
+    for schedule in login_id.schedules:
+        for date in schedule.dates:
+            if date.start_datetime.date() == record.standard_meet_start_datetime.date() and date.meeting_platform==meeting_platform:
+                if not check_slot_available(date,record.standard_meet_start_datetime,record.standard_meet_end_datetime):
+                    return False
+                # else:
+                #     continue
+    return True
+
+# if it returns False, then the slot is occupied. true mean its free
+def check_if_slot_occupied_from_login_id_recurring(login_id,recurring_datetime,meeting_platform):
+    for schedule in login_id.schedules:
+        for date in schedule.dates:
+            if date.start_datetime.date() == recurring_datetime.start_datetime.date() and date.meeting_platform==meeting_platform:
+                if not check_slot_available(date,recurring_datetime.start_datetime,recurring_datetime.end_datetime):
+                    return False
+                # else:
+                #     continue
+    return True
 
 def get_suitable_id_standard(record,login_id):
     if len(login_id.schedules)==0:
         record.assigned_id = login_id.id
         return True
-    for schedule in login_id.schedules:
-        for date in schedule.dates:
-            if date.start_datetime.date() == record.standard_meet_start_datetime.date():
-                if not check_slot_available(date,record.standard_meet_start_datetime,record.standard_meet_end_datetime):
-                    # record.assigned_id = login_id.id
-                    return False
-                else:
-                    continue
-    return True
+    if login_id.meeting_platform!='dual':
+        return check_if_slot_occupied_from_login_id(record,login_id,record.meeting_platform)
+        
+    else:
+
+        if check_if_slot_occupied_from_login_id(record,login_id,'zoom') and record.meeting_platform=='zoom':
+            return True
+        if check_if_slot_occupied_from_login_id(record,login_id,'elearn') and record.meeting_platform=='elearn':
+            return True
+        return False
+        
+
 
 def get_suitable_id_recurring(record,login_id,recurring_datetime):
     if len(login_id.schedules)==0:
         record.assigned_id = login_id.id
         return True
-    for schedule in login_id.schedules:
-        for date in schedule.dates:
-            if date.start_datetime.date() == recurring_datetime.start_datetime.date():
-                if not check_slot_available(date,recurring_datetime.start_datetime,recurring_datetime.end_datetime):
-                    return False
-    return True
+    if login_id.meeting_platform!='dual':
+        return check_if_slot_occupied_from_login_id_recurring(login_id,recurring_datetime,record.meeting_platform)
+    else:
+        if check_if_slot_occupied_from_login_id_recurring(login_id,recurring_datetime,'zoom') and record.meeting_platform=='zoom':
+            return True
+        if check_if_slot_occupied_from_login_id_recurring(login_id,recurring_datetime,'elearn') and record.meeting_platform=='elearn':
+            return True
+        return False
+    
+    # for schedule in login_id.schedules:
+    #     for date in schedule.dates:
+    #         if date.start_datetime.date() == recurring_datetime.start_datetime.date():
+    #             if not check_slot_available(date,recurring_datetime.start_datetime,recurring_datetime.end_datetime):
+    #                 return False
 
 def get_start_end_datetime(record,start_date=None,end_date=None):
     # have to round the time to 2 decimal places before splitting hour and minutes

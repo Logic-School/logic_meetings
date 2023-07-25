@@ -19,6 +19,7 @@ class MeetingSchedule(models.Model):
     schedule_type = fields.Selection([('standard','Standard'),('recurring','Recurring')], string="Meeting Type")
     
     standard_meet_start_datetime = fields.Datetime(string="Start At", readonly=False, store=True)
+    testf = fields.Integer(string="Testd")
     # method to set seconds to 0
     @api.onchange('standard_meet_start_datetime')
     def _change_std_start_datetime(self):
@@ -37,11 +38,6 @@ class MeetingSchedule(models.Model):
     dates = fields.One2many('meeting.date','schedule_id', string="Meeting Dates")
     weekdays = fields.Many2many('meeting.weekday',string="Weekdays")
     scheduled = fields.Boolean(string="Is Scheduled",default=False)
-    testf = fields.Char(compute="_comp_test")
-    @api.depends('start_time')
-    def _comp_test(self):
-        for record in self:
-            record.testf = ''.join((f'{record.start_time:.2f}').split('.'))
 
     def clear_dates(self):
         # Display the warning prompt
