@@ -4,7 +4,7 @@ from datetime import datetime
 class MeetingHandle(models.Model):
     _name="meeting.login"
     _rec_name = "login_id"
-    login_id = fields.Char(string="Login ID")
+    login_id = fields.Char(string="Login ID", unique=True)
     password = fields.Char(string="Password")
     capacity = fields.Integer(string="Max Capacity")
     meeting_platform = fields.Selection([('zoom','Zoom'),('elearn','ELearn'),('dual','Dual(Zoom and ELearn)')], string="Meeting Platform")
@@ -19,29 +19,8 @@ class MeetingHandle(models.Model):
             return True
         return False
     
-    def check_if_current_time_slot_occupied_dual(self,record,date_obj,current_datetime):
-        pass
-
-    # @api.model
-    # def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
-    # submenu=False):
-    #     res = super(MeetingHandle, self).fields_view_get(
-    #     view_id=view_id, view_type=view_type, toolbar=toolbar,
-    #     submenu=submenu)
-    #     # add here your condition
-    #     if view_type=='form':
-    #         for record in self:
-    #             if record.meeting_platform:
-    #                 current_datetime = datetime.now()
-    #                 if record.meeting_platform!='dual':
-    #                     date_objs = self.env['meeting.date'].search([('assigned_id','=',record.id),('scheduled','=',True)])    
-    #                     for date_obj in date_objs:
-    #                         if self.check_if_current_time_slot_occupied(date_obj,current_datetime):
-    #                             record.current_user = date_obj.host
-    #                             break
-    #                     # res['fields']['current_user']['value'] = self.env['res.users'].search([],limit=1).id
-    #                     record.current_user=self.env['res.users'].search([],limit=1).id
-    #     return res
+    # def check_if_current_time_slot_occupied_dual(self,record,date_obj,current_datetime):
+    #     pass
     
     
     def _compute_current_second_user(self):

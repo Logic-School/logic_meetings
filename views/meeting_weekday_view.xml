@@ -7,6 +7,7 @@
     </record>
     <menuitem name="Weekdays" id="menu_meeting_weekday"
               action="details_meeting_weekday_action"
+              groups="logic_meetings.group_meeting_administrator"
               sequence="1"
               parent="menu_meeting_logic"
               />   

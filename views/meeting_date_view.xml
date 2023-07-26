@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.actions.act_window" id="details_meeting_date_action">
+        <field name="name">Dates</field>
+        <field name="res_model">meeting.date</field>
+        <field name="view_mode">calendar,tree,form</field>
+    </record>
+    <menuitem name="Calender" id="menu_meeting_date"
+              action="details_meeting_date_action"
+              parent="menu_meeting_logic"
+              sequence="6"/>
+
+    <record id="view_meeting_date_calendar" model="ir.ui.view">
+        <field name="name">meeting.date.calendar</field>
+        <field name="model">meeting.date</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <calendar string="Scheduled Dates" date_start="start_datetime" date_stop="end_datetime" 
+            color="host"
+            >
+                <field name="host" filters="1"/>
+                <field name="assigned_id" filters="1"/>
+            </calendar>
+        </field>
+    </record>
+</odoo>

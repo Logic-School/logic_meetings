@@ -5,15 +5,25 @@
         <field name="name">Login IDs</field>
         <field name="res_model">meeting.login</field>
         <field name="view_mode">tree,form</field>
+
     </record>
-    <menuitem name="Logic Meetings" id="menu_meeting_logic"
-              action="details_meeting_login_details_action"
+
+    <record model="ir.actions.act_window" id="details_meeting_schedule_action">
+        <field name="name">Schedules</field>
+        <field name="res_model">meeting.schedule</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Meetings Scheduler" id="menu_meeting_logic"
+              action="details_meeting_schedule_action"
               sequence="6"/>
+              
 
     <menuitem name="Login IDs" id="menu_meeting_login"
+              groups="logic_meetings.group_meeting_administrator"
               action="details_meeting_login_details_action"
               parent="menu_meeting_logic"
-              sequence="1"/>
+              sequence="6"/>
     <record id="meeting_login_details_tree_view" model="ir.ui.view">
         <field name="name">meeting.login.tree</field>
         <field name="model">meeting.login</field>
