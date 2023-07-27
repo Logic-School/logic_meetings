@@ -13,7 +13,13 @@ class MeetingSchedule(models.Model):
     end_date_recurring = fields.Date(string="Recurring End Date")
     subject = fields.Char(string="Subject")
     # host = fields.Many2one('res.users',string="Host")
-    host = fields.Many2one('res.users',string="Host",related="create_uid")
+    def _get_default_host(self):
+        return self.env.user
+    def _compute_is_admin(self):
+        for record in self:
+            record.is_admin= self.env.user.has_group('logic_meetings.group_meeting_administrator')
+    is_admin = fields.Boolean(compute="_compute_is_admin")
+    host = fields.Many2one('res.users',string="Host",default=_get_default_host)
     assigned_id = fields.Many2one('meeting.login', string="Login ID", store=True, readonly=True)
     req_capacity = fields.Integer(string="Required Capacity")
     meeting_platform = fields.Selection([('zoom','Zoom'),('elearn','ELearn')], required=True)
@@ -25,10 +31,10 @@ class MeetingSchedule(models.Model):
     schedule_end_time_view = fields.Char(string="End Time", compute="_compute_end_time_view")
     def _compute_start_time_view(self):
         for record in self:
-            if record.schedule_type=='standard':
+            if record.schedule_type=='standard' and record.standard_meet_start_datetime:
                 time_with_ist_diff_added  = record.standard_meet_start_datetime + timedelta(hours=5,minutes=30)
                 record.schedule_start_time_view = str(time_with_ist_diff_added.strftime("%H:%M"))
-            else:
+            elif record.schedule_type=='recurring' and record.start_time:
                 start_hour,start_minutes = f'{record.start_time:.2f}'.split('.')
                     # minutes are stored as percentages of an hour. so it has to be converted into actual minutes
                 start_minutes = str(int( (int(start_minutes)/100)*60))
@@ -38,13 +44,15 @@ class MeetingSchedule(models.Model):
                 if int(start_hour)<10:
                     start_hour = '0'+start_hour
                 record.schedule_start_time_view = start_hour + ":" + start_minutes
+            else:
+                record.schedule_start_time_view = ""
     
     def _compute_end_time_view(self):
         for record in self:
-            if record.schedule_type=='standard':
+            if record.schedule_type=='standard' and record.standard_meet_end_datetime:
                 time_with_ist_diff_added  = record.standard_meet_end_datetime + timedelta(hours=5,minutes=30)
                 record.schedule_end_time_view = str(time_with_ist_diff_added.strftime("%H:%M"))
-            else:
+            elif record.schedule_type=='recurring' and record.end_time:
                 start_hour,start_minutes = f'{record.end_time:.2f}'.split('.')
                     # minutes are stored as percentages of an hour. so it has to be converted into actual minutes
                 start_minutes = str(int( (int(start_minutes)/100)*60))
@@ -53,13 +61,16 @@ class MeetingSchedule(models.Model):
                 if int(start_hour)<10:
                     start_hour = '0'+start_hour
                 record.schedule_end_time_view = start_hour + ":" + start_minutes
+            else:
+                record.schedule_end_time_view = ""
     def _compute_date_view(self):
         for record in self:
-            if record.schedule_type=='standard':
+            if record.schedule_type=='standard' and record.standard_meet_start_datetime and record.standard_meet_end_datetime:
                 record.schedule_date_view = str(record.standard_meet_start_datetime.date())+" to "+str(record.standard_meet_end_datetime.date())
-            else:
+            elif record.schedule_type=='recurring' and record.start_date_recurring and record.end_date_recurring:
                 record.schedule_date_view = str(record.start_date_recurring)+" to "+str(record.end_date_recurring)
-    
+            else:
+                record.schedule_date_view = ""
     # method to set seconds to 0
     @api.onchange('standard_meet_start_datetime')
     def _change_std_start_datetime(self):
@@ -119,7 +130,7 @@ class MeetingSchedule(models.Model):
                 record.scheduled = True
                 # date_obj = self.env['meeting.date'].
 
-            if record.schedule_type == "recurring" and record.start_date_recurring and record.end_date_recurring:
+            elif record.schedule_type == "recurring" and record.start_date_recurring and record.end_date_recurring:
                 start_datetime,end_datetime,time_difference = scheduling.get_start_end_datetime(record,start_date=record.start_date_recurring, end_date=record.end_date_recurring)
                 if not record.dates:
                     dates = scheduling.get_all_dates_in_a_period(time_difference,start_datetime,end_datetime,weekdays=scheduling.get_weekdays(record))
@@ -137,6 +148,8 @@ class MeetingSchedule(models.Model):
                             'scheduled':True,
                         })
                 record.scheduled = True
+            else:
+                raise UserError("Make sure all the fields are properly filled before scheduling a meeting!")
     def get_available_login_id(self):
         for record in self:
             successfully_assigned = scheduling.get_login_id(self,record)
@@ -165,7 +178,7 @@ class MeetingSchedule(models.Model):
             elif record.meeting_platform=="elearn":
                 name+="ELEARN " 
 
-            if record.schedule_type=='standard':
+            if record.schedule_type=='standard' and record.standard_meet_start_datetime:
                 name+=str(record.standard_meet_start_datetime.date())
             elif record.schedule_type=='recurring':
                 name+=str(record.start_date_recurring) + " to " + str(record.start_date_recurring)

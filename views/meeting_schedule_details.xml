@@ -45,14 +45,15 @@
                             <field name="subject"/>
                             <field name="scheduled"/>
                             <field name="schedule_type"/>
-                            <field name="standard_meet_start_datetime" attrs="{'invisible': [('schedule_type','!=','standard')]}"/>
-                            <field name="standard_meet_end_datetime" attrs="{'invisible': [('schedule_type','!=','standard')]}"/>
-                            <field name="start_date_recurring" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/>
-                            <field name="end_date_recurring" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/>
+                            <field name="standard_meet_start_datetime" attrs="{'invisible': [('schedule_type','!=','standard')], 'required':[('schedule_type','=','standard')]}"/>
+                            <field name="standard_meet_end_datetime" attrs="{'invisible': [('schedule_type','!=','standard')], 'required':[('schedule_type','=','standard')]}"/>
+                            <field name="start_date_recurring" attrs="{'invisible': [('schedule_type','!=','recurring')], 'required':[('schedule_type','=','recurring')]}"/>
+                            <field name="end_date_recurring" attrs="{'invisible': [('schedule_type','!=','recurring')], 'required':[('schedule_type','=','recurring')]}"/>
                             <field name="weekdays" widget="many2many_tags" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/> 
-                            <field name="start_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/>
-                            <field name="end_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')]}"/>
-                            <field name="host"/>
+                            <field name="start_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')], 'required':[('schedule_type','=','recurring')]}"/>
+                            <field name="end_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')], 'required':[('schedule_type','=','recurring')]}"/>
+                            <field name="host" attrs="{'readonly':[('is_admin','=',False)]}"/>
+                            <field name="is_admin" invisible="1"/>
                             <field name="testf" invisible="1"/>
                         </group>
                         <group>
