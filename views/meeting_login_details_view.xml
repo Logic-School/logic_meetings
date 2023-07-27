@@ -48,6 +48,9 @@
                             <field name="login_id"/>
                             <field name="password"/>
                             <field name="capacity"/>
+                            <field name="zoom_account_id"/>
+                            <field name="zoom_client_id"/>
+                            <field name="zoom_client_secret"/>
                         </group>
                         <group>
                             <field name="meeting_platform"/>

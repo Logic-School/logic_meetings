@@ -3,6 +3,7 @@ from odoo.exceptions import ValidationError,UserError
 from datetime import datetime, time, timedelta,timezone
 import pytz
 from . import scheduling
+from . import zoom_meetings
 class MeetingSchedule(models.Model):
     _name = "meeting.schedule"
     name = fields.Char(compute="_compute_name")
@@ -11,6 +12,7 @@ class MeetingSchedule(models.Model):
     # date_time = fields.Datetime(string="End Time")
     start_date_recurring = fields.Date(string="Recurring Start Date") 
     end_date_recurring = fields.Date(string="Recurring End Date")
+    description = fields.Text(string="Description")
     subject = fields.Char(string="Subject")
     # host = fields.Many2one('res.users',string="Host")
     def _get_default_host(self):
@@ -29,6 +31,9 @@ class MeetingSchedule(models.Model):
     schedule_date_view = fields.Char(string="Date",compute="_compute_date_view")
     schedule_start_time_view = fields.Char(string="Start Time", compute="_compute_start_time_view")
     schedule_end_time_view = fields.Char(string="End Time", compute="_compute_end_time_view")
+    zoom_meeting_link = fields.Text(string="Meeting Link",default=False)
+    zoom_meet_id = fields.Char(string="Meeting ID")
+    zoom_meet_pass = fields.Char(string="Meeting Passcode")
     def _compute_start_time_view(self):
         for record in self:
             if record.schedule_type=='standard' and record.standard_meet_start_datetime:
@@ -100,6 +105,31 @@ class MeetingSchedule(models.Model):
                     break
             record.scheduled = any_scheduled 
 
+    def create_zoom_meeting(self):
+        for record in self:
+            if record.meeting_platform=='zoom' and record.assigned_id:
+                access_token = zoom_meetings.get_access_token(record.assigned_id.zoom_account_id,record.assigned_id.zoom_client_id,record.assigned_id.zoom_client_secret)
+                if record.schedule_type=='standard':
+                    start_datetime=str(record.standard_meet_start_datetime.date())+"T"+str(record.standard_meet_start_datetime.strftime("%H:%M:%S"))
+                    end_datetime=str(record.standard_meet_end_datetime.date())+"T"+str(record.standard_meet_end_datetime.strftime("%H:%M:%S"))
+                    meeting_minutes = (record.standard_meet_end_datetime - record.standard_meet_start_datetime).seconds//60
+                    zoom_meetings.create_zoom_meeting(record,access_token,start_datetime,end_datetime,meeting_minutes)
+                elif record.schedule_type=='recurring':
+                    start_datetime=str(record.start_date_recurring)+"T"+record.schedule_start_time_view+":00"
+                    end_datetime=str(record.end_date_recurring)+"T"+record.schedule_start_time_view+":00"
+                    # start_hour,start_minutes = record.schedule_start_time_view.split(':')
+                    # end_hour,end_minutes = record.schedule_end_time_view.split(':')
+                    # minutes = (end_hour*60 + end_minutes) -
+                    meeting_minutes =  int( (record.end_time*60) - (record.start_time*60) )
+                    weekdays = scheduling.get_weekdays(record)
+                    zoom_meetings.create_zoom_meeting(record,access_token,start_datetime,meeting_minutes,end_datetime=end_datetime,recurring=True,weekdays=weekdays)
+    def start_zoom_meeting(self):
+        for record in self:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': record.zoom_meeting_link,
+                'target': 'new',
+            }
     def clear_dates(self):
         # Display the warning prompt
         for record in self:
@@ -167,6 +197,9 @@ class MeetingSchedule(models.Model):
                         # record.assigned_id = False
                         login_id.write({'second_user': False})
                 record.assigned_id = False
+                record.zoom_meeting_link=False
+                record.zoom_meet_id=False
+                record.zoom_meet_pass=False
     def _compute_name(self):
         for record in self:
             name=""

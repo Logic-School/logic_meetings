@@ -32,8 +32,9 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button name="create_zoom_meeting" string="Create Zoom Meeting" help="Click here to create zoom meeting" type="object" class="oe_highlight" attrs="{'invisible': ['|',('assigned_id','=',False),'|',('zoom_meeting_link','!=',False),('meeting_platform','!=','zoom')]}"/>
                     <button name="get_available_login_id" string="Request Login Credentials" help="Click here to request for Login ID" type="object" class="oe_highlight" attrs="{'invisible': ['|',('assigned_id','!=',False),('scheduled','=',False)]}"/>
-                    <button name="release_login_id" string="Release Credentials" help="Click here to release currently assigned ID" type="object" class="oe_highlight" attrs="{'invisible': [('assigned_id','=',False)]}"/>
+                    <button name="release_login_id" string="Release Credentials" help="Click here to release currently assigned ID and remove meeting links(Zoom)" type="object" class="oe_highlight" attrs="{'invisible': [('assigned_id','=',False)]}"/>
                     <button name="schedule_meetings" string="Schedule" help="Click here to schedule the meeting" type="object" class="btn-success" attrs="{'invisible': [('scheduled','=',True)]}"/>
                     <button name="unschedule_meetings" string="Unschedule All" help="Click here to schedule the meeting" type="object" class="btn-warning" attrs="{'invisible': [('scheduled','=',False)]}"/>
                     <button name="clear_dates" string="Clear Dates" help="Click here to delete all date records related to this schedule" type="object" class="btn-danger" confirm="Are you sure you want to delete all date records related to this schedule?" attrs="{'invisible': ['|',('dates','=',[] ),('assigned_id','!=',False)]}"/>
@@ -43,7 +44,8 @@
                     <group>
                         <group>
                             <field name="subject"/>
-                            <field name="scheduled"/>
+                            <field name="description"/>
+                            <field name="scheduled" invisible="1"/>
                             <field name="schedule_type"/>
                             <field name="standard_meet_start_datetime" attrs="{'invisible': [('schedule_type','!=','standard')], 'required':[('schedule_type','=','standard')]}"/>
                             <field name="standard_meet_end_datetime" attrs="{'invisible': [('schedule_type','!=','standard')], 'required':[('schedule_type','=','standard')]}"/>
@@ -53,13 +55,20 @@
                             <field name="start_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')], 'required':[('schedule_type','=','recurring')]}"/>
                             <field name="end_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')], 'required':[('schedule_type','=','recurring')]}"/>
                             <field name="host" attrs="{'readonly':[('is_admin','=',False)]}"/>
-                            <field name="is_admin" invisible="1"/>
+                            <field name="is_admin" invisible="1"/> 
                             <field name="testf" invisible="1"/>
                         </group>
                         <group>
+                            <field name="zoom_meeting_link" invisible="1"/>
                             <field name="assigned_id"/>
                             <field name="req_capacity"/>
-                            <field name="meeting_platform"/>
+                            <label for="meeting_platform"/>
+                            <div class="o_row">
+                                <field name="meeting_platform"/>
+                                <button name="start_zoom_meeting" type="object"  class="btn-success"  attrs="{'invisible':[('zoom_meeting_link','=',False)]}">Start Meet</button>
+                            </div>
+                            <field name="zoom_meet_id" attrs="{'invisible':[('zoom_meeting_link','=',False)]}"/>
+                            <field name="zoom_meet_pass" attrs="{'invisible':[('zoom_meeting_link','=',False)]}"/>
                         </group>
                     </group>
                     <group>

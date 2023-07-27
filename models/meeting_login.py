@@ -13,7 +13,9 @@ class MeetingHandle(models.Model):
     allocated_start = fields.Datetime(string="Allocated Start")
     allocated_end = fields.Datetime(string="Allocated End")
     schedules = fields.One2many('meeting.schedule','assigned_id',string="Schedules")
-
+    zoom_account_id = fields.Char(string="Zoom Account ID")
+    zoom_client_id = fields.Char(string="Zoom Client ID")
+    zoom_client_secret = fields.Char(string="Zoom Client Secret")
     def check_if_current_time_slot_occupied(self,date_obj,current_datetime):
         if current_datetime>=date_obj.start_datetime and current_datetime<=date_obj.end_datetime:
             return True
