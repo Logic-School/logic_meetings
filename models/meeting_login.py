@@ -13,6 +13,10 @@ class MeetingHandle(models.Model):
     allocated_start = fields.Datetime(string="Allocated Start")
     allocated_end = fields.Datetime(string="Allocated End")
     schedules = fields.One2many('meeting.schedule','assigned_id',string="Schedules")
+    def _compute_is_admin(self):
+        for record in self:
+            record.is_admin= self.env.user.has_group('logic_meetings.group_meeting_administrator')
+    is_admin = fields.Boolean(compute="_compute_is_admin")
     zoom_account_id = fields.Char(string="Zoom Account ID")
     zoom_client_id = fields.Char(string="Zoom Client ID")
     zoom_client_secret = fields.Char(string="Zoom Client Secret")

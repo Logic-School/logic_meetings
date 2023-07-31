@@ -48,9 +48,10 @@
                             <field name="login_id"/>
                             <field name="password"/>
                             <field name="capacity"/>
-                            <field name="zoom_account_id"/>
-                            <field name="zoom_client_id"/>
-                            <field name="zoom_client_secret"/>
+                            <field name="is_admin" invisible="1"/>
+                            <field name="zoom_account_id" attrs="{'invisible':[('is_admin','=',False)]}"/>
+                            <field name="zoom_client_id" attrs="{'invisible':[('is_admin','=',False)]}"/>
+                            <field name="zoom_client_secret" attrs="{'invisible':[('is_admin','=',False)]}"/>
                         </group>
                         <group>
                             <field name="meeting_platform"/>
