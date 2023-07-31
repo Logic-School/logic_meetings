@@ -110,10 +110,13 @@ class MeetingSchedule(models.Model):
             if record.meeting_platform=='zoom' and record.assigned_id:
                 access_token = zoom_meetings.get_access_token(record.assigned_id.zoom_account_id,record.assigned_id.zoom_client_id,record.assigned_id.zoom_client_secret)
                 if record.schedule_type=='standard':
+                    # start_datetime = record.standard_meet_start_datetime
+                    # end_datetime = record.standard_meet_end_datetime
                     start_datetime=str(record.standard_meet_start_datetime.date())+"T"+str(record.standard_meet_start_datetime.strftime("%H:%M:%S"))
                     end_datetime=str(record.standard_meet_end_datetime.date())+"T"+str(record.standard_meet_end_datetime.strftime("%H:%M:%S"))
+                    # meeting_minutes = (end_datetime - start_datetime).seconds//60
                     meeting_minutes = (record.standard_meet_end_datetime - record.standard_meet_start_datetime).seconds//60
-                    zoom_meetings.create_zoom_meeting(record,access_token,start_datetime,end_datetime,meeting_minutes)
+                    zoom_meetings.create_zoom_meeting(record,access_token,start_datetime,meeting_minutes,end_datetime)
                 elif record.schedule_type=='recurring':
                     start_datetime=str(record.start_date_recurring)+"T"+record.schedule_start_time_view+":00"
                     end_datetime=str(record.end_date_recurring)+"T"+record.schedule_start_time_view+":00"
