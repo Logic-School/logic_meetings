@@ -74,7 +74,7 @@
                             <div class="o_row">
                                 <field name="zoom_join_link" class="d-none"/>
                                 <!-- <button name="start_zoom_meeting" type="object"  class="btn-success"  attrs="{'invisible':[('zoom_meeting_link','=',False)]}">Start Meet</button> -->
-                                <button string="Click Here to copy the meeting link to your clipboard" name="show_copy_successful" type="object" onclick="copyMeetLink()"  class="oe_highlight"  attrs="{'invisible':[('zoom_join_link','=',False)]}">Copy Link</button>
+                                <button string="Copy Link" name="show_copy_successful" type="object" onclick="copyMeetLink()"  class="oe_highlight"  attrs="{'invisible':[('zoom_join_link','=',False)]}" help="Click Here to copy the meeting link to your clipboard"/>
                                
                                 <!-- <button name="custom_method" string="Copy to Clipboard" type="button" class="o_form_button_edit btn btn-primary"/>                            </div> -->
                             </div>

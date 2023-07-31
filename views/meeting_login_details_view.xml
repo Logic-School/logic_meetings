@@ -14,7 +14,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Meetings Scheduler" id="menu_meeting_logic"
+    <menuitem name="Meeting Scheduler" id="menu_meeting_logic"
               action="details_meeting_schedule_action"
               sequence="6"/>
               

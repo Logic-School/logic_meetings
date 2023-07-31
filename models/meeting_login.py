@@ -86,7 +86,7 @@ class MeetingHandle(models.Model):
                             }
                     }
             else:
-                raise UserError("Invalid credentials! Please check if the data entered is correct.")
+                raise UserError("Invalid credentials! Please check if the data entered is correct."+str(response.status_code))
             return notification         
 
 
