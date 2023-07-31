@@ -29,7 +29,7 @@ def create_zoom_meeting(record,access_token,start_datetime,minutes,end_datetime=
             'duration': minutes,  # Meeting duration in minutes
             # 'timezone': 'Asia/Kolkata',  # Replace with the desired timezone
             'agenda': record.description,
-            # 'use_pmi':True
+            'use_pmi':True
         }
     else:
         # in datetime object weekday start with monday(0) and ends at sunday(6). in zoom api, weekday start at sunday(1) and ends at saturday(7)
@@ -52,7 +52,11 @@ def create_zoom_meeting(record,access_token,start_datetime,minutes,end_datetime=
     response = requests.post(create_meeting_url, headers=headers, json=data)
     if response.status_code==201:
         record.zoom_meeting_link=response.json().get('start_url')
-        record.zoom_meet_id=response.json().get('id')
+        record.zoom_join_link=response.json().get('join_url')
+        if recurring:
+            record.zoom_meet_id=response.json().get('id')
+        else:
+            record.zoom_meet_id=response.json().get('pmi')
         record.zoom_meet_pass=response.json().get('password')
         # raise UserError(str(data.keys())+str(data.values()))
     else:

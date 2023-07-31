@@ -20,6 +20,7 @@
             >
                 <field name="host" filters="1"/>
                 <field name="assigned_id" filters="1"/>
+                <field name="meeting_platform" filters="1"/>
             </calendar>
         </field>
     </record>

@@ -42,6 +42,9 @@
         <field name="model">meeting.login</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="validate_zoom_credentials" string="Validate Zoom Credentials" help="Click here to validate the credentials for this Zoom ID" type="object" class="oe_highlight" attrs="{'invisible': ['|',('zoom_account_id','=',False),'|',('zoom_client_id','=',False),'|',('zoom_client_secret','=', False),('meeting_platform','not in',('dual','zoom'))]}"/>
+                </header>
                 <sheet>
                     <group>
                         <group>

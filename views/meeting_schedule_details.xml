@@ -30,13 +30,24 @@
         <field name="name">meeting.schedule.form</field>
         <field name="model">meeting.schedule</field>
         <field name="arch" type="xml">
+
             <form>
+                <script type="text/javascript">
+                    function copyMeetLink()
+                    {
+                        var field_value = document.getElementsByName('zoom_join_link');
+                        if (field_value.length)
+                        {
+                        navigator.clipboard.writeText(field_value[0].innerHTML)
+                        }
+                    }
+                </script>
                 <header>
                     <button name="create_zoom_meeting" string="Create Zoom Meeting" help="Click here to create zoom meeting" type="object" class="oe_highlight" attrs="{'invisible': ['|',('assigned_id','=',False),'|',('zoom_meeting_link','!=',False),('meeting_platform','!=','zoom')]}"/>
-                    <button name="get_available_login_id" string="Request Login Credentials" help="Click here to request for Login ID" type="object" class="oe_highlight" attrs="{'invisible': ['|',('assigned_id','!=',False),('scheduled','=',False)]}"/>
+                    <button name="get_available_login_id" string="Request Login Credentials" help="Click here to request for a Login ID" type="object" class="oe_highlight" attrs="{'invisible': ['|',('assigned_id','!=',False),('scheduled','=',False)]}"/>
                     <button name="release_login_id" string="Release Credentials" help="Click here to release currently assigned ID and remove meeting links(Zoom)" type="object" class="oe_highlight" attrs="{'invisible': [('assigned_id','=',False)]}"/>
                     <button name="schedule_meetings" string="Schedule" help="Click here to schedule the meeting" type="object" class="btn-success" attrs="{'invisible': [('scheduled','=',True)]}"/>
-                    <button name="unschedule_meetings" string="Unschedule All" help="Click here to schedule the meeting" type="object" class="btn-warning" attrs="{'invisible': [('scheduled','=',False)]}"/>
+                    <button name="unschedule_meetings" string="Unschedule All" help="Click here to unschedule all meetings for this schedule" type="object" class="btn-warning" attrs="{'invisible': [('scheduled','=',False)]}"/>
                     <button name="clear_dates" string="Clear Dates" help="Click here to delete all date records related to this schedule" type="object" class="btn-danger" confirm="Are you sure you want to delete all date records related to this schedule?" attrs="{'invisible': ['|',('dates','=',[] ),('assigned_id','!=',False)]}"/>
 
                 </header> 
@@ -56,18 +67,27 @@
                             <field name="end_time" widget="float_time" attrs="{'invisible': [('schedule_type','!=','recurring')], 'required':[('schedule_type','=','recurring')]}"/>
                             <field name="host" attrs="{'readonly':[('is_admin','=',False)]}"/>
                             <field name="is_admin" invisible="1"/> 
-                            <field name="testf"/>
+                            <field name="testf" invisible="1"/>
                         </group>
                         <group>
+                            <label for="zoom_join_link" attrs="{'invisible':[('zoom_join_link','=',False)]}"/>
+                            <div class="o_row">
+                                <field name="zoom_join_link" class="d-none"/>
+                                <!-- <button name="start_zoom_meeting" type="object"  class="btn-success"  attrs="{'invisible':[('zoom_meeting_link','=',False)]}">Start Meet</button> -->
+                                <button string="Click Here to copy the meeting link to your clipboard" name="show_copy_successful" type="object" onclick="copyMeetLink()"  class="oe_highlight"  attrs="{'invisible':[('zoom_join_link','=',False)]}">Copy Link</button>
+                               
+                                <!-- <button name="custom_method" string="Copy to Clipboard" type="button" class="o_form_button_edit btn btn-primary"/>                            </div> -->
+                            </div>
                             <field name="zoom_meeting_link" invisible="1"/>
                             <field name="assigned_id"/>
                             <field name="req_capacity"/>
                             <label for="meeting_platform"/>
                             <div class="o_row">
                                 <field name="meeting_platform"/>
-                                <button name="start_zoom_meeting" type="object"  class="btn-success"  attrs="{'invisible':[('zoom_meeting_link','=',False)]}">Start Meet</button>
+                                <button name="start_zoom_meeting" type="object"  class="btn-success"  attrs="{'invisible':[('zoom_meeting_link','=',False)]}">Start Meet</button>                               
+                                <!-- <button name="custom_method" string="Copy to Clipboard" type="button" class="o_form_button_edit btn btn-primary"/>                            </div> -->
                             </div>
-                            <field name="zoom_meet_id" attrs="{'invisible':[('zoom_meeting_link','=',False)]}"/>
+                                <field name="zoom_meet_id" attrs="{'invisible':[('zoom_meeting_link','=',False)]}"/>
                             <field name="zoom_meet_pass" attrs="{'invisible':[('zoom_meeting_link','=',False)]}"/>
                         </group>
                     </group>

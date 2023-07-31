@@ -1,5 +1,8 @@
 from odoo import models,api,fields
+from odoo.exceptions import UserError
 from datetime import datetime
+from . import zoom_meetings
+import requests
 
 class MeetingHandle(models.Model):
     _name="meeting.login"
@@ -64,5 +67,26 @@ class MeetingHandle(models.Model):
                     if not success:
                         record.second_user=False
 
+    def validate_zoom_credentials(self):
+        for record in self:
+            account_id = record.zoom_account_id
+            client_id = record.zoom_client_id
+            client_secret = record.zoom_client_secret
+            data = zoom_meetings.get_request_data_for_token(account_id,client_id,client_secret)
+            token_url = 'https://zoom.us/oauth/token'
+            response = requests.post(token_url,data=data)
+            if response.status_code==200:
+                    notification = {
+                        'type': 'ir.actions.client',
+                        'tag': 'display_notification',
+                        'params': {
+                            'title': ('Validation Successful'),
+                            'message': 'Your Zoom credentials have been validated successfully',
+                            # 'sticky': False,
+                            }
+                    }
+            else:
+                raise UserError("Invalid credentials! Please check if the data entered is correct.")
+            return notification         
 
 

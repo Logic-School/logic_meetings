@@ -31,7 +31,10 @@ class MeetingSchedule(models.Model):
     schedule_date_view = fields.Char(string="Date",compute="_compute_date_view")
     schedule_start_time_view = fields.Char(string="Start Time", compute="_compute_start_time_view")
     schedule_end_time_view = fields.Char(string="End Time", compute="_compute_end_time_view")
-    zoom_meeting_link = fields.Text(string="Meeting Link",default=False)
+    # url to start the meeting (for host)
+    zoom_meeting_link = fields.Text(string="Meeting Start Link",default=False)
+    # url to start the meeting (for participants)
+    zoom_join_link = fields.Text(string="Meeting Link",default=False)
     zoom_meet_id = fields.Char(string="Meeting ID")
     zoom_meet_pass = fields.Char(string="Meeting Passcode")
     def _compute_start_time_view(self):
@@ -153,7 +156,7 @@ class MeetingSchedule(models.Model):
             if record.schedule_type=="standard" and record.standard_meet_start_datetime and record.standard_meet_end_datetime and not record.scheduled:
                 # date = datetime.strptime((record.standard_meet_date).strftime('%d '), '%d %b %Y').replace(hour=11, minute=59)
                 # start_datetime,end_datetime = scheduling.get_start_end_datetime(record)
-                date_obj = self.env['meeting.date'].create({
+                date_obj = self.env['meeting.date'].sudo().create({
                     'start_datetime':record.standard_meet_start_datetime,
                     'end_datetime': record.standard_meet_end_datetime,
                     'scheduled': True,
@@ -168,7 +171,7 @@ class MeetingSchedule(models.Model):
                 if not record.dates:
                     dates = scheduling.get_all_dates_in_a_period(time_difference,start_datetime,end_datetime,weekdays=scheduling.get_weekdays(record))
                     for date in dates:
-                        date_obj = self.env['meeting.date'].create({
+                        date_obj = self.env['meeting.date'].sudo().create({
                             'start_datetime':date[0],
                             'end_datetime':date[1],
                             'scheduled': True,
@@ -220,9 +223,14 @@ class MeetingSchedule(models.Model):
                 name+=str(record.start_date_recurring) + " to " + str(record.start_date_recurring)
             record.name=name
 
-# class Reservations(models.Model):
-#     _name="meeting.reservation"
-#     login_id = fields.Many2one('meeting.login')
-#     timedate = fields.Datetime(string="Time and Date")
-#     host1 = fields.Many2one('meeting.login',related="login_id.current_user")
-#     host2 = fields.Many2one('meeting.login',related="login_id.second_user")
+    def show_copy_successful(self):
+        for record in self:
+            return  {
+                        'type': 'ir.actions.client',
+                        'tag': 'display_notification',
+                        'params': {
+                            'title': ('Link Copied Successfully'),
+                            'message': 'The Meeting link has been copied to your clipboard',
+                            # 'sticky': False,
+                            }
+                    }

@@ -5,7 +5,7 @@ access_schedule_user,access_schedule_details,model_meeting_schedule,group_meetin
 access_schedule_admin,access_schedule_details,model_meeting_schedule,group_meeting_administrator,1,1,1,1
 access_weekday_user,access_weekday_details,model_meeting_weekday,group_meeting_user,1,0,0,0
 access_weekday_admin,access_weekday_details,model_meeting_weekday,group_meeting_administrator,1,1,1,1
-access_date_user,access_meet_date_details,model_meeting_date,group_meeting_user,1,1,1,1
+access_date_user,access_meet_date_details,model_meeting_date,group_meeting_user,1,1,0,1
 access_date_admin,access_meet_date_details,model_meeting_date,group_meeting_administrator,1,1,1,1
 
 

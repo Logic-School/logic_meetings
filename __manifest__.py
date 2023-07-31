@@ -12,6 +12,11 @@
         'views/meeting_weekday_view.xml',
         'views/meeting_date_view.xml',
     ],
+    # 'assets':{
+    #     'web.assets_backend': [
+
+    #     ]
+    # },
     'demo': [],
     'summary': "Logic Meetings",
     'description': "",
