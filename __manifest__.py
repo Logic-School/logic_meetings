@@ -11,6 +11,7 @@
         'views/meeting_schedule_details.xml',
         'views/meeting_weekday_view.xml',
         'views/meeting_date_view.xml',
+        'data/weekday_data.xml',
     ],
     # 'assets':{
     #     'web.assets_backend': [
