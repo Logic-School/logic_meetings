@@ -66,6 +66,9 @@ class MeetingHandle(models.Model):
                             break
                     if not success:
                         record.second_user=False
+            else:
+                record.current_user=False
+                record.second_user=False
 
     def validate_zoom_credentials(self):
         for record in self:
