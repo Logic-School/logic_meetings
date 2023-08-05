@@ -24,4 +24,19 @@
             </calendar>
         </field>
     </record>
+    <record id="view_meeting_date_tree" model="ir.ui.view">
+        <field name="name">meeting.date.tree</field>
+        <field name="model">meeting.date</field>
+        <field name="arch" type="xml">
+            <tree create="0">
+                <field name="subject"/>
+                <field name="start_datetime"/>
+                <field name="end_datetime"/>
+                <field name="host"/>
+                <field name="schedule_id"/>
+                <field name="meeting_platform"/>
+                <field name="scheduled"/>
+            </tree>
+        </field>
+    </record>
 </odoo>

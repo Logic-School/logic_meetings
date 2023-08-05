@@ -3,6 +3,7 @@ from odoo import fields, models, api
 class MeetingDate(models.Model):
     _name = "meeting.date"
     _rec_name='subject'
+    # _inherit = "mail.activity.mixin"
     start_datetime = fields.Datetime(string="Start Datetime",readonly=True)
     end_datetime = fields.Datetime(string="End Datetime",readonly=True)
     schedule_id = fields.Many2one('meeting.schedule',string="Schedule ID",ondelete="cascade",readonly=True)

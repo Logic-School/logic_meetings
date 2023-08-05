@@ -6,6 +6,7 @@ from . import scheduling
 from . import zoom_meetings
 class MeetingSchedule(models.Model):
     _name = "meeting.schedule"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     name = fields.Char(compute="_compute_name")
     start_time = fields.Float(string="Start Time",required=True,default=0.0)
     end_time = fields.Float(string="End Time",required=True,default=0.0)
@@ -224,7 +225,7 @@ class MeetingSchedule(models.Model):
             record.name=name
 
     def show_copy_successful(self):
-        for record in self:
+        # for record in self:
             return  {
                         'type': 'ir.actions.client',
                         'tag': 'display_notification',

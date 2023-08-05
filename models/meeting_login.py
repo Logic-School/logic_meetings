@@ -85,11 +85,18 @@ class MeetingHandle(models.Model):
                         'params': {
                             'title': ('Validation Successful'),
                             'message': 'Your Zoom credentials have been validated successfully',
-                            # 'sticky': False,
                             }
                     }
             else:
-                raise UserError("Invalid credentials! Please check if the data entered is correct."+str(response.status_code))
+                    notification = {
+                        'type': 'ir.actions.client',
+                        'tag': 'display_notification',
+                        'params': {
+                            'title': ('Validation Failed!'),
+                            'message': 'Please check if the entered credentials are correct',
+                            'type': 'warning'
+                            }
+                    }            
             return notification         
 
 
