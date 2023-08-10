@@ -4,6 +4,7 @@
         <field name="name">Dates</field>
         <field name="res_model">meeting.date</field>
         <field name="view_mode">calendar,tree,form</field>
+        <field name="context">{'search_default_group_schedule_id': 1}</field>
     </record>
     <menuitem name="Calender" id="menu_meeting_date"
               action="details_meeting_date_action"
@@ -37,6 +38,22 @@
                 <field name="meeting_platform"/>
                 <field name="scheduled"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="meeting_date_search" model="ir.ui.view">
+        <field name="name">meeting.date.search</field>
+        <field name="model">meeting.date</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter string="Scheduled" name="active" domain="[('scheduled', '=',True)]"/>
+                <filter string="Zoom" name="active" domain="[('meeting_platform', '=','zoom')]"/>
+                <filter string="E-Learn" name="active" domain="[('meeting_platform', '=','elearn')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Meeting Platform" name="group_meeting_platform" context="{'group_by': 'meeting_platform'}"/>
+                    <filter string="Schedule ID" name="group_schedule_id" context="{'group_by': 'schedule_id'}"/>
+                </group>
+            </search>
         </field>
     </record>
 </odoo>
