@@ -9,6 +9,7 @@
     <menuitem name="Calender" id="menu_meeting_date"
               action="details_meeting_date_action"
               parent="menu_meeting_logic"
+              web_icon="logic_base/static/description/icon.png"
               sequence="6"/>
 
     <record id="view_meeting_date_calendar" model="ir.ui.view">
